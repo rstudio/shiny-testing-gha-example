@@ -85,6 +85,14 @@ jobs:
           options(install.packages.check.source = "no")
           if (!shinytest::dependenciesInstalled()) shinytest::installDependencies()
 
+      # display all installed packages information
+      - name: Session info
+        shell: Rscript {0}
+        run: |
+          options(width = 100)
+          pkgs <- installed.packages()[, "Package"]
+          sessioninfo::session_info(pkgs, include_base = TRUE)
+
       # runs all tests in the ./tests folder
       - name: Check
         shell: Rscript {0}
