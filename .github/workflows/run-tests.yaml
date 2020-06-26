@@ -70,6 +70,23 @@ jobs:
         run: |
           remotes::install_deps(dependencies = TRUE)
 
+      # install phantomjs
+      - name: Find PhantomJS path
+        id: phantomjs
+        run: |
+          echo "::set-output name=path::$(Rscript -e 'cat(shinytest:::phantom_paths()[[1]])')"
+      - name: Cache PhantomJS
+        uses: actions/cache@v1
+        with:
+          path: ${{ steps.phantomjs.outputs.path }}
+          key: ${{ runner.os }}-phantomjs
+          restore-keys: ${{ runner.os }}-phantomjs
+      - name: Install PhantomJS
+        shell: Rscript {0}
+        run: |
+          options(install.packages.check.source = "no")
+          if (!shinytest::dependenciesInstalled()) shinytest::installDependencies()
+
       # runs all tests in the ./tests folder
       - name: Check
         shell: Rscript {0}
