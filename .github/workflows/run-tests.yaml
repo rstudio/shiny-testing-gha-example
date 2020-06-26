@@ -28,6 +28,13 @@ jobs:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
+
+      # do not convert line feeds in windows
+      - name: Windows git setup
+        if: runner.os == 'Windows'
+        run:
+          git config --global core.autocrlf false
+
       # check out repo
       - uses: actions/checkout@v2
 
