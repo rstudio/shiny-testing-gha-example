@@ -1,3 +1,4 @@
 library(shinytest)
-shinytest::testApp("../")
-
+shinytest::expect_pass(
+  shinytest::testApp("../", interactive = FALSE)
+)
