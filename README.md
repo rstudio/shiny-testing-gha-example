@@ -37,7 +37,7 @@ shiny::shinyAppTemplate(".", examples = c("app", "rdir", "module", "testthat"))
 
 To integrate with GitHub Actions, we should use a `./DESCRIPTION` file. This will allow us to install necessary packages for running the application and for testing the application.
 
-Packages needed to run the application should be put in `Imports`.  Packages needed for testing the application should be put in `Suggests`.
+Packages needed to run the application should be put in `Imports`.  Packages needed for testing the application should be put in `Suggests`.  Use the `renv` package to help find all package dependencies being used in your application: `unique(renv::dependencies()$Package)`.
 
 
 ```r
