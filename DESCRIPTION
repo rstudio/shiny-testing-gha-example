@@ -3,7 +3,7 @@ Title: Test Shiny server code using GitHub Actions
 Version: 0.0.1
 Authors@R:
   c(
-    person("Barret", "Schloerke", email = "barret@rstudio.com", role = c("cre", "aut"), comment = c(ORCID = "0000-0001-9986-114X"),
+    person("Barret", "Schloerke", email = "barret@rstudio.com", role = c("cre", "aut"), comment = c(ORCID = "0000-0001-9986-114X")),
     person("Carson", "Sievert", email = "carson@rstudio.com", role = "aut", comment = c(ORCID = "0000-0002-4958-2844")),
     person(family = "RStudio", role = c("cph", "fnd"))
   )
