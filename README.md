@@ -9,16 +9,61 @@
 
 In 2020, [GitHub Actions](https://github.com/features/actions) supported launching [`macOS`, `Windows`, and `Linux` virtual machines](https://github.com/actions/virtual-environments) for continuous integration. Using [`r-lib/actions`](https://github.com/r-lib/actions) to set up our testing environments, we can test R packages and shiny applications on all three platforms symultaniously.
 
+There are multiple levels of testing, each with their own pros and cons.  To view the different testing setups, click the links below:
+
+Cost / Benefit
+* **Minimal:** `testthat` only
+  * **GitHub Branch:** [rstudio/shiny-testing-gha-example@testthat_only](https://github.com/rstudio/shiny-testing-gha-example/tree/testthat_only)
+  * **Pros:**
+    * Quick to install
+    * Can test server code using `shiny::testServer()`
+  * **Cons:**
+    * `shiny::testServer()` can not test the Shiny UI
+    * No snapshot testing using `shinytest`
+
+* **Single platform snapshot:** `testthat` + `shinytest` w/ snapshots on single platform (**\*\*suggested\*\***)
+  * **GitHub Branch:** [rstudio/shiny-testing-gha-example@compare_on_macos](https://github.com/rstudio/shiny-testing-gha-example/tree/compare_on_macos)
+  * **Compare:** [`Minimal` to `Single platform snapshot`](https://github.com/rstudio/shiny-testing-gha-example/compare/testthat_only...compare_on_macos)
+  * **Pro:**
+    * All benefits of `Minimal` testing
+    * Test using `shinytest`
+    * Snapshots with `shinytest` on a single platform
+  * **Con:**
+    * Only perform `shinytest` snapshot testing on a single platform
+
+* **Multi platform snapshots:** `testthat` + `shinytest` w/ snapshots on all platforms
+  * **GitHub Branch:** [rstudio/shiny-testing-gha-example@compare_on_all](https://github.com/rstudio/shiny-testing-gha-example/tree/compare_on_all)
+  * **Compare:** [`Single platform snapshot` to `Multi platform snapshot`](https://github.com/rstudio/shiny-testing-gha-example/compare/compare_on_macos...compare_on_all)
+  * **Pro:**
+    * All benefits of `Single platform snapshot`
+    * Performs snapshots on 3 platforms
+  * **Con:**
+    * More files to manage
+    * Can not debug other platform images locally, only through GitHub Actions
+      * Requires downloading zip files and manually copying in expected values
+    * Takes more time to manage
+      * Slow iteration time; ~ 10 mins for *broken* builds
+
+
+For developers who host their applications, use the `Single platform snapshot` setup.  Your applications will be run on `Linux` only in production.
+
+For developers who will have users run their applications locally, use the `Multi platform snapshots`. However, I do not believe it is worth the effort to maintain all `shinytest` platform images. The process is currently slow and tedious but may be of benefit to your application.  Instead, use `Single platform snapshot`.
+
+
+----------------------------
+
+
+# Steps to reproduce this branch
+
 This repo serves as an example of how to test your shiny application.
 
-Features:
+Features in this branch:
 * Continuous Integration using GitHub Actions
 * Template app from `shiny`
 * Testing
+  * `input` and `output` testing with `shinytest`
+  * Snapshot testing with `shinytest` on macOS
   * Server code testing with `testthat`
-
-
-# Steps to reproduce
 
 Please follow the steps below where you see fit to test your shiny application.
 
