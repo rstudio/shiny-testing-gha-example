@@ -112,6 +112,14 @@ jobs:
           options(install.packages.check.source = "no")
           if (!shinytest::dependenciesInstalled()) shinytest::installDependencies()
 ```
+* Before doing any other steps, make sure windows does not convert any line endings from `\n` to `\r\n`
+```yaml
+      # do not convert line feeds in windows
+      - name: Windows git setup
+        if: runner.os == 'Windows'
+        run:
+          git config --global core.autocrlf false
+```
 
 ## `shinytest`
 
