@@ -28,8 +28,8 @@ Please follow the steps below where you see fit to test your shiny application.
 Initialize a shiny application so we have something to work with...
 
 ```r
-# Set up a new app with everything but shinytest
-shiny::shinyAppTemplate(".", examples = c("app", "rdir", "module", "testthat"))
+# Set up a new app with everything
+shiny::shinyAppTemplate(".", examples = "all")
 ```
 
 
@@ -43,6 +43,7 @@ Packages needed to run the application should be put in `Imports`.  Packages nee
 ```r
 usethis::use_description() # Initialize description file
 usethis::use_package("shiny") # required to run app. (Imports)
+usethis::use_package("shinytest", "Suggests") # testing only
 usethis::use_package("testthat", "Suggests") # testing only
 ```
 
@@ -93,6 +94,53 @@ jobs:
           name: ${{ runner.os }}-r${{ matrix.config.r }}-tests
           path: tests
 ```
+* Install `phantomjs` after the `Install dependencies` step:
+```yaml
+      - name: Find PhantomJS path
+        id: phantomjs
+        run: |
+          echo "::set-output name=path::$(Rscript -e 'cat(shinytest:::phantom_paths()[[1]])')"
+      - name: Cache PhantomJS
+        uses: actions/cache@v1
+        with:
+          path: ${{ steps.phantomjs.outputs.path }}
+          key: ${{ runner.os }}-phantomjs
+          restore-keys: ${{ runner.os }}-phantomjs
+      - name: Install PhantomJS
+        shell: Rscript {0}
+        run: |
+          options(install.packages.check.source = "no")
+          if (!shinytest::dependenciesInstalled()) shinytest::installDependencies()
+```
+* Before doing any other steps, make sure windows does not convert any line endings from `\n` to `\r\n`
+```yaml
+      # do not convert line feeds in windows
+      - name: Windows git setup
+        if: runner.os == 'Windows'
+        run:
+          git config --global core.autocrlf false
+```
+
+## `shinytest`
+
+`shinytest` tests should be initialized on a local machine.  Be sure to run `shiny::runTests()` and save the results to your repo before testing on GitHub Actions!
+
+`shinytest` performs visual testing in addition to `input` and `output` validations. The images produced by `shinytest` will most likely be incorrect if the R version and/or operating system is changed.
+
+To combat this, we will only compare the expected images on the `macOS` operating system.
+
+```r
+# ./tests/shinytest.R
+
+library(shinytest)
+expect_pass(testApp("../", compareImages = grepl("^darwin", R.version$os)))
+```
+
+For easier debugging, set `compareImages` to `TRUE` to match your local operating system.
+* macOS: `grepl("^darwin", R.version$os)`
+* Windows: `.Platform$OS.type == "windows"`
+* Linux: `grepl("linux-gnu", R.version$os)`
+
 
 # File Structure
 
@@ -101,7 +149,6 @@ File structure of testing application:
 
 <!-- tree -a -I ".git|.DS_Store" -->
 ```
-├── .Rbuildignore
 ├── .github
 │   ├── .gitignore
 │   └── workflows
@@ -115,6 +162,14 @@ File structure of testing application:
 ├── README.md
 ├── app.R
 └── tests
+    ├── shinytest
+    │   ├── mytest-expected
+    │   │   ├── 001.json
+    │   │   ├── 001.png
+    │   │   ├── 002.json
+    │   │   └── 002.png
+    │   └── mytest.R
+    ├── shinytest.R
     ├── testthat
     │   ├── test-examplemodule.R
     │   ├── test-server.R

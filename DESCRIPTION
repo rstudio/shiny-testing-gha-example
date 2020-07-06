@@ -16,4 +16,5 @@ RoxygenNote: 7.1.0
 Imports:
     shiny
 Suggests:
+    shinytest,
     testthat
