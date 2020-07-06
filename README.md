@@ -127,20 +127,19 @@ jobs:
 
 `shinytest` performs visual testing in addition to `input` and `output` validations. The images produced by `shinytest` will most likely be incorrect if the R version and/or operating system is changed.
 
-To combat this, we will only compare the expected images on the `macOS` operating system.
+To combat this, we will set a `suffix` value to the running platform: `macOS`, `Windows`, and `Ubuntu`.
 
 ```r
 # ./tests/shinytest.R
 
 library(shinytest)
-expect_pass(testApp("../", compareImages = grepl("^darwin", R.version$os)))
+expect_pass(testApp(
+  "../",
+  suffix = strsplit(utils::osVersion, " ")[[1]][1]
+))
 ```
 
-For easier debugging, set `compareImages` to `TRUE` to match your local operating system.
-* macOS: `grepl("^darwin", R.version$os)`
-* Windows: `.Platform$OS.type == "windows"`
-* Linux: `grepl("linux-gnu", R.version$os)`
-
+Note: Duplicate your local `shinytest` baselines to the other testing folder suffix values. Ex: `mytest-expected-macOS` to `mytest-expected-Ubuntu` and `mytest-expected-Windows`.  This will allow for GitHub Actions to fail and post the expected images for each platform.  If no baselines are found, shinytest will disclare the run a success and move `mytest-current` to `mytest-expected-SUFFIX`.
 
 # File Structure
 
@@ -163,7 +162,17 @@ File structure of testing application:
 ├── app.R
 └── tests
     ├── shinytest
-    │   ├── mytest-expected
+    │   ├── mytest-expected-Ubuntu
+    │   │   ├── 001.json
+    │   │   ├── 001.png
+    │   │   ├── 002.json
+    │   │   └── 002.png
+    │   ├── mytest-expected-Windows
+    │   │   ├── 001.json
+    │   │   ├── 001.png
+    │   │   ├── 002.json
+    │   │   └── 002.png
+    │   ├── mytest-expected-macOS
     │   │   ├── 001.json
     │   │   ├── 001.png
     │   │   ├── 002.json

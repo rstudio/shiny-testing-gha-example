@@ -1,0 +1,15 @@
+{
+  "input": {
+    "examplemodule1-button": 2,
+    "examplemodule2-button": 0,
+    "size": 10
+  },
+  "output": {
+    "examplemodule1-out": "2",
+    "examplemodule2-out": "0",
+    "sequence": "1 10 2 3 4 5 6 7 8 9"
+  },
+  "export": {
+
+  }
+}
