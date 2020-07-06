@@ -125,7 +125,7 @@ To combat this, we will only compare the expected images on the `macOS` operatin
 # ./tests/shinytest.R
 
 library(shinytest)
-expect_pass(testApp("../", compareImages = grepl("^darwin", R.version$os))
+expect_pass(testApp("../", compareImages = grepl("^darwin", R.version$os)))
 ```
 
 For easier debugging, set `compareImages` to `TRUE` to match your local operating system.
