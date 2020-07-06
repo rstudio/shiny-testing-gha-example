@@ -6,10 +6,10 @@ on:
     branches:
       - master
 
-name: R-CMD-check
+name: run-tests
 
 jobs:
-  R-CMD-check:
+  run-tests:
     runs-on: ${{ matrix.config.os }}
 
     name: ${{ matrix.config.os }} (${{ matrix.config.r }})
@@ -63,18 +63,16 @@ jobs:
       - name: Install dependencies
         run: |
           remotes::install_deps(dependencies = TRUE)
-          remotes::install_cran("rcmdcheck")
         shell: Rscript {0}
 
-      - name: Check
-        env:
-          _R_CHECK_CRAN_INCOMING_REMOTE_: false
-        run: shiny::runTests(".", assert = TRUE)
+      - name: Run tests
         shell: Rscript {0}
+        run: |
+          shiny::runTests(".", assert = TRUE)
 
-      - name: Upload check results
+      - name: Upload test results
         if: failure()
         uses: actions/upload-artifact@master
         with:
-          name: ${{ runner.os }}-r${{ matrix.config.r }}-results
-          path: check
+          name: ${{ runner.os }}-r${{ matrix.config.r }}-tests
+          path: tests
