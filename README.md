@@ -75,6 +75,7 @@ name: run-tests
 jobs:
   run-tests:
 ```
+* Remove any `r: 'devel'` matrix configurations. These are not beneficial for application testing.
 * In `run-tests.yaml`, change `Check` step to:
 ```yaml
       - name: Run tests
