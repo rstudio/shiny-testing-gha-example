@@ -1,2 +1,5 @@
 library(shinytest)
-expect_pass(testApp("../", compareImages = grepl("^darwin", R.version$os)))
+expect_pass(testApp(
+  "../",
+  suffix = strsplit(utils::osVersion, " ")[[1]][1]
+))
