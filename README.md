@@ -11,7 +11,6 @@ In 2020, [GitHub Actions](https://github.com/features/actions) supported launchi
 
 There are multiple levels of testing, each with their own pros and cons.  To view the different testing setups, click the links below:
 
-Cost / Benefit
 * **Minimal:** `testthat` only
   * **GitHub Branch:** [rstudio/shiny-testing-gha-example@testthat_only](https://github.com/rstudio/shiny-testing-gha-example/tree/testthat_only)
   * **Pros:**
@@ -102,7 +101,7 @@ To download this repo's workflow file, run:
 
 ```r
 usethis::use_github_action(
-  url = "https://raw.githubusercontent.com/rstudio/shiny-testing-gha-example/master/.github/workflows/run-tests.yaml"
+  url = "https://raw.githubusercontent.com/rstudio/shiny-testing-gha-example/compare_all/.github/workflows/run-tests.yaml"
 )
 ```
 
@@ -193,6 +192,7 @@ File structure of testing application:
 
 <!-- tree -a -I ".git|.DS_Store" -->
 ```
+├── .Rbuildignore
 ├── .github
 │   ├── .gitignore
 │   └── workflows
