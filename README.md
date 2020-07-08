@@ -13,7 +13,7 @@ There are multiple levels of testing, each with their own pros and cons.  To vie
 
 Cost / Benefit
 * **Minimal:** `testthat` only
-  * **GitHub Branch:** [`rstudio/shiny-testing-gha-example@testthat_only`](https://github.com/rstudio/shiny-testing-gha-example/tree/testthat_only)
+  * **GitHub Branch:** [`rstudio/shiny-testing-gha-example@minimal`](https://github.com/rstudio/shiny-testing-gha-example/tree/minimal)
   * **Pros:**
     * Quick to install
     * Can test server code using `shiny::testServer()`
@@ -23,7 +23,7 @@ Cost / Benefit
 
 * **Single platform snapshot:** `testthat` + `shinytest` w/ snapshots on single platform (**\*\*suggested\*\***)
   * **GitHub Branch:** [`rstudio/shiny-testing-gha-example@single_platform_snapshot`](https://github.com/rstudio/shiny-testing-gha-example/tree/single_platform_snapshot)
-  * **Compare:** [`Minimal` to `Single platform snapshot`](https://github.com/rstudio/shiny-testing-gha-example/compare/testthat_only...single_platform_snapshot)
+  * **Compare:** [`Minimal` to `Single platform snapshot`](https://github.com/rstudio/shiny-testing-gha-example/compare/minimal...single_platform_snapshot)
   * **Pro:**
     * All benefits of `Minimal` testing
     * Test using `shinytest`
@@ -45,9 +45,9 @@ Cost / Benefit
       * Slow iteration time; ~ 10 mins for *broken* builds
 
 
-For developers who host their applications, use the `Single platform snapshot` setup.  Your applications will be run on `Linux` only in production.
+For developers who host their applications, use the `Single platform snapshot` setup.  Your applications will be run on `Linux` only in production.  It is ok to only compare images using your local platform for easier debugging (ex: `macOS`) as unexpected visual differences are rarely platform dependent as `shinytest` uses `phantomjs` on all platforms.
 
-For developers who will have users run their applications locally, use the `Multi platform snapshots`. However, I do not believe it is worth the effort to maintain all `shinytest` platform images. The process is currently slow and tedious but may be of benefit to your application.  Instead, use `Single platform snapshot`.
+For developers who will have users run their applications locally, you may consider the `Multi platform snapshot`. However, I do not believe it is worth the effort to maintain all of the expected `shinytest` platform images. The process to maintain them is currently slow and tedious and personally not worth the manual effort.  Instead, use `Single platform snapshot`.
 
 ## Use this repo as a template
 
