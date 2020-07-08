@@ -97,7 +97,7 @@ To download this repo's workflow file, run:
 
 ```r
 usethis::use_github_action(
-  url = "https://raw.githubusercontent.com/rstudio/shiny-testing-gha-example/testthat_only/.github/workflows/run-tests.yaml"
+  url = "https://raw.githubusercontent.com/rstudio/shiny-testing-gha-example/minimal/.github/workflows/run-tests.yaml"
 )
 ```
 
