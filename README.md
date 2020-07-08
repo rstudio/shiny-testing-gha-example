@@ -100,7 +100,7 @@ To download this repo's workflow file, run:
 
 ```r
 usethis::use_github_action(
-  url = "https://raw.githubusercontent.com/rstudio/shiny-testing-gha-example/single_platform_only/.github/workflows/run-tests.yaml"
+  url = "https://raw.githubusercontent.com/rstudio/shiny-testing-gha-example/single_platform_snapshot/.github/workflows/run-tests.yaml"
 )
 ```
 
