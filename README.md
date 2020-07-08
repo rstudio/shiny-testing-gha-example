@@ -81,8 +81,53 @@ Initialize a shiny application so we have something to work with...
 shiny::shinyAppTemplate(".", examples = "all")
 ```
 
+If you already have a shiny application ready, set up testing for your application by calling:
 
-## Use a `DESCRIPTION` file
+```r
+shiny::shinyAppTemplate(".", examples = c("shinytest", "testthat"))
+```
+
+
+## `shinytest`
+
+To learn more about `shinytest`, please [see `Getting Started with shinytest`](https://rstudio.github.io/shinytest/articles/shinytest.html).
+
+`shinytest` performs visual testing in addition to `input` and `output` validations. These tests should be initialized on your local machine before testing GitHub Actions.  Be sure to run `shiny::runTests()` and save the results to your repo before testing on GitHub Actions!
+
+The images produced by `shinytest` will most likely be incorrect if the R version and/or operating system is changed. This is caused by subtle differences in how plots are produced and the default fonts of each system. Being off by one pixel will result in a failure in `shinytest`.  Remember, snapshots are being captured using `phantomjs`, not the default platform browser.
+
+To make testing managable, only compare the expected images on your local platform.  This will make debugging easier and allow for you to initialize valid images.  For example, we can test only on `macOS`.
+
+```r
+# ./tests/shinytest.R
+
+library(shinytest)
+expect_pass(testApp("../", compareImages = grepl("^macOS", utils::osVersion)))
+```
+
+More examples on how to set `compareImages` to `TRUE` to match your local operating system.
+* macOS: `grepl("^macOS", utils::osVersion)`
+* Windows: `grepl("^Windows", utils::osVersion)`
+* Linux: `grepl("^Ubuntu", utils::osVersion)`
+
+### Resolving `shinytest` failures
+
+If a testing failure is produced by `shinytest`, the workflow file is configured to upload the `./tests` folder as [an artifact](https://docs.github.com/en/actions/configuring-and-managing-workflows/persisting-workflow-data-using-artifacts).
+
+To fix your `shinytest` test, you MUST:
+* manually download the failed test artifact,
+* copy in the `*-current` folder,
+* call `shinytest::viewTestDiff()` to resolve the test differences,
+* and delete the `*-current` folder.
+
+Once the tests have been updated, commit and push the updated files to GitHub.  Do not maintain any `*-current` folders (ex: `mytest-current`), only maintain `*-expected` folders (ex: `mytest-expected`).
+
+(Repeat these steps as necessary.)
+
+
+## GitHub Actions
+
+#### Use a `DESCRIPTION` file
 
 To integrate with GitHub Actions, we should use a `./DESCRIPTION` file. This will allow us to install necessary packages for running the application and for testing the application.
 
@@ -98,7 +143,6 @@ usethis::use_package("testthat", "Suggests") # testing only
 
 From here, feel free to manually adjust the title, description, authors, etc. This will not affect testing your application testing.
 
-## GitHub Actions
 
 ### Copy
 
@@ -161,7 +205,7 @@ jobs:
           options(install.packages.check.source = "no")
           if (!shinytest::dependenciesInstalled()) shinytest::installDependencies()
 ```
-* Before doing any other steps, make sure windows does not convert any line endings from `\n` to `\r\n`
+* Before doing any other steps, make sure Windows does not convert any line endings from `\n` to `\r\n`. This helps when comparing json files on Windows.
 ```yaml
       # do not convert line feeds in windows
       - name: Windows git setup
@@ -169,26 +213,6 @@ jobs:
         run:
           git config --global core.autocrlf false
 ```
-
-## `shinytest`
-
-`shinytest` tests should be initialized on a local machine.  Be sure to run `shiny::runTests()` and save the results to your repo before testing on GitHub Actions!
-
-`shinytest` performs visual testing in addition to `input` and `output` validations. The images produced by `shinytest` will most likely be incorrect if the R version and/or operating system is changed.
-
-To combat this, we will only compare the expected images on the `macOS` operating system.
-
-```r
-# ./tests/shinytest.R
-
-library(shinytest)
-expect_pass(testApp("../", compareImages = grepl("^macOS", utils::osVersion)))
-```
-
-For easier debugging, set `compareImages` to `TRUE` to match your local operating system.
-* macOS: `grepl("^macOS", utils::osVersion)`
-* Windows: `grepl("^Windows", utils::osVersion)`
-* Linux: `grepl("^Ubuntu", utils::osVersion)`
 
 
 # File Structure
