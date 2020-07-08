@@ -13,7 +13,7 @@ There are multiple levels of testing, each with their own pros and cons.  To vie
 
 Cost / Benefit
 * **Minimal:** `testthat` only
-  * **GitHub Branch:** [rstudio/shiny-testing-gha-example@testthat_only](https://github.com/rstudio/shiny-testing-gha-example/tree/testthat_only)
+  * **GitHub Branch:** [`rstudio/shiny-testing-gha-example@testthat_only`](https://github.com/rstudio/shiny-testing-gha-example/tree/testthat_only)
   * **Pros:**
     * Quick to install
     * Can test server code using `shiny::testServer()`
@@ -22,8 +22,8 @@ Cost / Benefit
     * No snapshot testing using `shinytest`
 
 * **Single platform snapshot:** `testthat` + `shinytest` w/ snapshots on single platform (**\*\*suggested\*\***)
-  * **GitHub Branch:** [rstudio/shiny-testing-gha-example@compare_on_macos](https://github.com/rstudio/shiny-testing-gha-example/tree/compare_on_macos)
-  * **Compare:** [`Minimal` to `Single platform snapshot`](https://github.com/rstudio/shiny-testing-gha-example/compare/testthat_only...compare_on_macos)
+  * **GitHub Branch:** [`rstudio/shiny-testing-gha-example@single_platform_snapshot`](https://github.com/rstudio/shiny-testing-gha-example/tree/single_platform_snapshot)
+  * **Compare:** [`Minimal` to `Single platform snapshot`](https://github.com/rstudio/shiny-testing-gha-example/compare/testthat_only...single_platform_snapshot)
   * **Pro:**
     * All benefits of `Minimal` testing
     * Test using `shinytest`
@@ -31,9 +31,9 @@ Cost / Benefit
   * **Con:**
     * Only perform `shinytest` snapshot testing on a single platform
 
-* **Multi platform snapshots:** `testthat` + `shinytest` w/ snapshots on all platforms
-  * **GitHub Branch:** [rstudio/shiny-testing-gha-example@compare_on_all](https://github.com/rstudio/shiny-testing-gha-example/tree/compare_on_all)
-  * **Compare:** [`Single platform snapshot` to `Multi platform snapshot`](https://github.com/rstudio/shiny-testing-gha-example/compare/compare_on_macos...compare_on_all)
+* **Multi platform snapshot:** `testthat` + `shinytest` w/ snapshots on all platforms
+  * **GitHub Branch:** [`rstudio/shiny-testing-gha-example@multi_platform_snapshot`](https://github.com/rstudio/shiny-testing-gha-example/tree/multi_platform_snapshot)
+  * **Compare:** [`Single platform snapshot` to `Multi platform snapshot`](https://github.com/rstudio/shiny-testing-gha-example/compare/single_platform_snapshot...multi_platform_snapshot)
   * **Pro:**
     * All benefits of `Single platform snapshot`
     * Performs snapshots on 3 platforms
