@@ -45,9 +45,9 @@ Cost / Benefit
       * Slow iteration time; ~ 10 mins for *broken* builds
 
 
-For developers who host their applications, use the `Single platform snapshot` setup.  Your applications will be run on `Linux` only in production.
+For developers who host their applications, use the `Single platform snapshot` setup.  Your applications will be run on `Linux` only in production.  It is ok to only compare images using your local platform for easier debugging (ex: `macOS`) as unexpected visual differences are rarely platform dependent as `shinytest` uses `phantomjs` on all platforms.
 
-For developers who will have users run their applications locally, use the `Multi platform snapshots`. However, I do not believe it is worth the effort to maintain all `shinytest` platform images. The process is currently slow and tedious but may be of benefit to your application.  Instead, use `Single platform snapshot`.
+For developers who will have users run their applications locally, you may consider the `Multi platform snapshot`. However, I do not believe it is worth the effort to maintain all of the expected `shinytest` platform images. The process to maintain them is currently slow and tedious and personally not worth the manual effort.  Instead, use `Single platform snapshot`.
 
 ## Use this repo as a template
 
