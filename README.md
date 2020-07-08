@@ -13,7 +13,7 @@ There are multiple levels of testing, each with their own pros and cons.  To vie
 
 Cost / Benefit
 * **Minimal:** `testthat` only
-  * **GitHub Branch:** [`rstudio/shiny-testing-gha-example@testthat_only`](https://github.com/rstudio/shiny-testing-gha-example/tree/testthat_only)
+  * **GitHub Branch:** [`rstudio/shiny-testing-gha-example@minimal`](https://github.com/rstudio/shiny-testing-gha-example/tree/minimal)
   * **Pros:**
     * Quick to install
     * Can test server code using `shiny::testServer()`
@@ -23,7 +23,7 @@ Cost / Benefit
 
 * **Single platform snapshot:** `testthat` + `shinytest` w/ snapshots on single platform (**\*\*suggested\*\***)
   * **GitHub Branch:** [`rstudio/shiny-testing-gha-example@single_platform_snapshot`](https://github.com/rstudio/shiny-testing-gha-example/tree/single_platform_snapshot)
-  * **Compare:** [`Minimal` to `Single platform snapshot`](https://github.com/rstudio/shiny-testing-gha-example/compare/testthat_only...single_platform_snapshot)
+  * **Compare:** [`Minimal` to `Single platform snapshot`](https://github.com/rstudio/shiny-testing-gha-example/compare/minimal...single_platform_snapshot)
   * **Pro:**
     * All benefits of `Minimal` testing
     * Test using `shinytest`
