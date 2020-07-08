@@ -49,7 +49,6 @@ For developers who host their applications, use the `Single platform snapshot` s
 
 For developers who will have users run their applications locally, use the `Multi platform snapshots`. However, I do not believe it is worth the effort to maintain all `shinytest` platform images. The process is currently slow and tedious but may be of benefit to your application.  Instead, use `Single platform snapshot`.
 
-
 ----------------------------
 
 
@@ -66,7 +65,6 @@ Features in this branch:
   * Server code testing with `testthat`
 
 Please follow the steps below where you see fit to test your shiny application.
-
 
 ## Set up App
 
@@ -102,7 +100,7 @@ To download this repo's workflow file, run:
 
 ```r
 usethis::use_github_action(
-  url = "https://raw.githubusercontent.com/rstudio/shiny-testing-gha-example/compare_on_macos/.github/workflows/run-tests.yaml"
+  url = "https://raw.githubusercontent.com/rstudio/shiny-testing-gha-example/single_platform_only/.github/workflows/run-tests.yaml"
 )
 ```
 
