@@ -178,13 +178,13 @@ To combat this, we will only compare the expected images on the `macOS` operatin
 # ./tests/shinytest.R
 
 library(shinytest)
-expect_pass(testApp("../", compareImages = grepl("^darwin", R.version$os)))
+expect_pass(testApp("../", compareImages = grepl("^macOS", utils::osVersion)))
 ```
 
 For easier debugging, set `compareImages` to `TRUE` to match your local operating system.
-* macOS: `grepl("^darwin", R.version$os)`
-* Windows: `.Platform$OS.type == "windows"`
-* Linux: `grepl("linux-gnu", R.version$os)`
+* macOS: `grepl("^macOS", utils::osVersion)`
+* Windows: `grepl("^Windows", utils::osVersion)`
+* Linux: `grepl("^Ubuntu", utils::osVersion)`
 
 
 # File Structure
