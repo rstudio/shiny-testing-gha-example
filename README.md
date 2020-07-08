@@ -79,8 +79,15 @@ Initialize a shiny application so we have something to work with...
 shiny::shinyAppTemplate(".", examples = c("app", "rdir", "module", "testthat"))
 ```
 
+If you already have a shiny application ready, set up testing for your application by calling:
 
-## Use a `DESCRIPTION` file
+```r
+shiny::shinyAppTemplate(".", examples = c("testthat"))
+```
+
+## GitHub Actions
+
+#### Use a `DESCRIPTION` file
 
 To integrate with GitHub Actions, we should use a `./DESCRIPTION` file. This will allow us to install necessary packages for running the application and for testing the application.
 
@@ -95,7 +102,6 @@ usethis::use_package("testthat", "Suggests") # testing only
 
 From here, feel free to manually adjust the title, description, authors, etc. This will not affect testing your application testing.
 
-## GitHub Actions
 
 ### Copy
 
