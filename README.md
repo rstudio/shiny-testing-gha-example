@@ -49,6 +49,12 @@ For developers who host their applications, use the `Single platform snapshot` s
 
 For developers who will have users run their applications locally, use the `Multi platform snapshots`. However, I do not believe it is worth the effort to maintain all `shinytest` platform images. The process is currently slow and tedious but may be of benefit to your application.  Instead, use `Single platform snapshot`.
 
+## Use this repo as a template
+
+To kick-start your shiny application testing on GitHub, click the green `Use this template` button to create a fresh GitHub repository with the full shiny application template and `Single platform snapshot` GitHub Action workflow file enabled by default. (Do **not** select `Include all branches` when using this template.)
+
+See instructions on how to [`Create a repository from a template`](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-from-a-template).
+
 ----------------------------
 
 
