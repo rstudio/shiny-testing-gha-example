@@ -70,3 +70,71 @@ To view a particular run, click on particular commit. If any of the builds for a
 ![](https://i.imgur.com/sC4TwEd.png)
 
 To view the snapshot differences, download the artifacts, and replace your local `tests/` directory with the artifacts' `tests/`. You can then call `shinytest::viewTestDiff()` on the app directory to view (and potentially approve) the differences. After approving, the differences should be tracked in your git repo, making it so you can commit and push the changes to resolve the test failure(s). 
+
+### Testing multiple applications
+
+All the templates provided here provide the scaffolding for testing a _single_ application. Here we'll demonstrate how to setup scaffolding for testing multiple apps. First off, let's use the GitHub Actions workflow for snapshot testing on a single platform:
+
+```r
+library(usethis)
+use_github_action(
+ url = "https://raw.githubusercontent.com/rstudio/shiny-testing-gha-example/single_platform_snapshot/.github/workflows/run-tests.yaml"
+)
+```
+
+Next, lets use `shiny::shinyAppTemplate()` to set-up scaffolding for multiple apps, the first of which will have snapshot-based testing and the second of which only needs server testing:
+
+```r
+library(shiny)
+shinyAppTemplate("app1", examples = c("app", "shinytest"))
+shinyAppTemplate("app2", examples = c("app", "testthat"))
+```
+
+As a result, the file structure now looks something like:
+
+```r
+fs::dir_tree(all = TRUE)
+```
+
+```r
+.
+├── .github
+│   ├── .gitignore
+│   └── workflows
+│       └── run-tests.yaml
+├── app1
+│   ├── app.R
+│   └── tests
+│       ├── shinytest
+│       │   └── mytest.R
+│       └── shinytest.R
+└── app2
+    ├── app.R
+    └── tests
+        ├── testthat
+        │   └── test-server.R
+        └── testthat.R
+```
+
+Now, to run tests over all the applications, we'll have to edit the `.github/workflows/run-tests.yaml` file to change `shiny::runTests(".", assert = TRUE)` to `lapply(c("app1", "app2"), shiny::runTests, assert = TRUE)` (or, if you'd rather not hard code the app directory names, do `lapply(dirname(Sys.glob("*/app.R")), shiny::runTests, assert = TRUE)`)
+
+At this point, you could replace the app code and tests with your own, then put all the R dependencies in a top-level `DESCRIPTION` file, and that way the GHA workflow will know how to install all the R dependencies:
+
+```r
+pkgs <- paste(renv::dependencies()$Package, collapse = ",")
+use_description(fields = list(Imports = pkgs))
+```
+
+### Using renv for reproducibility
+
+If reproducibility is of utmost importance for your project, you may want to consider relying on [**renv**](https://rstudio.github.io/renv/articles/renv.html) instead of a `DESCRIPTION` file to "lock in" versions of the R packages that you're using. Note that if you do this, you'll have to add a step to your `.github/workflows/run-tests.yaml` to include something like:
+
+```yaml
+- name: Restore renv snapshot
+  shell: Rscript {0}
+  run: |
+    if (!require('renv')) install.packages('renv')
+    renv::restore()
+```
+
+Also, make sure to re-run `renv::snapshot()` on the development machine whenever you update packages locally to make sure the packages on GHA stay in sync.
