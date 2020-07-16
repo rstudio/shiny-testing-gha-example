@@ -30,7 +30,7 @@ The templates described above are available through different branches of this r
 
 #### New project
 
-To copy a template to a _new_ GitHub repo, click the green `Use this template` button. This essentially copies this repo to your GitHub profile and kick off a [GHA workflow](https://github.com/rstudio/shiny-testing-gha-example/actions) ([see here](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-from-a-template) for more details). 
+To copy a template to a _new_ GitHub repo, click the green `Use this template` button. This essentially copies this repo to your GitHub profile and kick off a [GHA workflow](https://github.com/rstudio/shiny-testing-gha-example/actions) ([see here](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-from-a-template) for more details).
 
 #### Existing project
 
@@ -69,7 +69,7 @@ To view a particular run, click on particular commit. If any of the builds for a
 
 ![](https://i.imgur.com/sC4TwEd.png)
 
-To view the snapshot differences, download the artifacts, and replace your local `tests/` directory with the artifacts' `tests/`. You can then call `shinytest::viewTestDiff()` on the app directory to view (and potentially approve) the differences. After approving, the differences should be tracked in your git repo, making it so you can commit and push the changes to resolve the test failure(s). 
+To view the snapshot differences, download the artifacts, and replace your local `tests/` directory with the artifacts' `tests/`. You can then call `shinytest::viewTestDiff()` on the app directory to view (and potentially approve) the differences. After approving, the differences should be tracked in your git repo, making it so you can commit and push the changes to resolve the test failure(s).
 
 ### Testing multiple applications
 
