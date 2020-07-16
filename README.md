@@ -5,172 +5,136 @@
 [![R build status](https://github.com/rstudio/shiny-testing-gha-example/workflows/run-tests/badge.svg)](https://github.com/rstudio/shiny-testing-gha-example/actions)
 <!-- badges: end -->
 
-`shiny::runTests()` was added in shiny `v1.5.0`.  This function tests a `shiny` application (ex: `app.R`) using all `.R` files in the base of level of the `./tests` directory.
+## Overview
 
-In 2020, [GitHub Actions](https://github.com/features/actions) supported launching [`macOS`, `Windows`, and `Linux` virtual machines](https://github.com/actions/virtual-environments) for continuous integration. Using [`r-lib/actions`](https://github.com/r-lib/actions) to set up our testing environments, we can test R packages and shiny applications on all three platforms symultaniously.
+This repository contains several templates for Shiny testing with [GitHub Actions](https://github.com/features/actions). The different types of Shiny testing, namely unit (i.e., **testthat**), server (i.e., `shiny::testServer()`), and snapshot-based (i.e., **shinytest**) testing are described in the [Shiny testing overview article](https://shiny.rstudio.com/articles/testing-overview.html) (please read that first if you aren't already familiar with each type of testing). Due to trade-offs associated with the different types of Shiny testing, this repo offers three different templates, which are provided on different branches of this repo:
 
-There are multiple levels of testing, each with their own pros and cons.  To view the different testing setups, click the links below:
+1. A [**minimal** template](https://github.com/rstudio/shiny-testing-gha-example/tree/minimal), which should be used only if unit and server testing fits your needs (that is, you don't need snapshot-based testing).
+  * By default, this template (as well as the other templates) run tests [on Windows, MacOS, and Linux with the current release version of R](https://github.com/rstudio/shiny-testing-gha-example/blob/531bba7c/.github/workflows/run-tests.yaml#L15-L19). If you need to test more versions of R, you can add more entries to the `.github/workflow/run-test.yaml` file [like this](https://github.com/r-lib/usethis/blob/819867e0/.github/workflows/R-CMD-check.yaml#L21-L29).
+2. All of (1), plus [snapshot-based testing on a **single** platform](https://github.com/rstudio/shiny-testing-gha-example/tree/single_platform_snapshot).
+  * This template [adds](https://github.com/rstudio/shiny-testing-gha-example/compare/minimal...single_platform_snapshot) snapshot-based testing on MacOS. The [`tests/shinytest.R`](https://github.com/rstudio/shiny-testing-gha-example) file is what ensures that snapshot images are compared only on MacOS. If you wanted to compare on Windows or Linux instead, you can change the `grepl("^macOS", utils::osVersion)` to `grepl("^Windows", utils::osVersion)` or `grepl("^Ubuntu", utils::osVersion)`. If your local OS happens to match the target OS for CI testing, then you can `shinytest::testApp()` to generate the expected baselines; otherwise, you'll want to [view and approve them via GHA artifacts](#view-and-manage-test-results-test-results).
+3. All of (1), plus [snapshot-based testing on a **multiple** platforms](https://github.com/rstudio/shiny-testing-gha-example/tree/multi_platform_snapshot).
+  * This template [adds](https://github.com/rstudio/shiny-testing-gha-example/compare/minimal...multi_platform_snapshot) snapshot-based testing on Windows, MacOS, and Linux. Snapshot-based testing on multiple platforms requires maintaining multiple baselines for the same snapshot, so this template adds a [`suffix` to each baseline with the platform's name](https://github.com/rstudio/shiny-testing-gha-example/blob/7041eaa/tests/shinytest.R#L4) (you could also include the R version in the suffix if you need different baselines for different R versions). This means you'll want to set up workflow for [viewing and approving new baselines via GHA artifacts](#view-and-manage-test-results-test-results).
 
-Cost / Benefit
-* **Minimal:** `testthat` only
-  * **GitHub Branch:** [`rstudio/shiny-testing-gha-example@minimal`](https://github.com/rstudio/shiny-testing-gha-example/tree/minimal)
-  * **Pros:**
-    * Quick to install
-    * Can test server code using `shiny::testServer()`
-  * **Cons:**
-    * `shiny::testServer()` can not test the Shiny UI
-    * No snapshot testing using `shinytest`
+## Get started
 
-* **Single platform snapshot:** `testthat` + `shinytest` w/ snapshots on single platform (**\*\*suggested\*\***)
-  * **GitHub Branch:** [`rstudio/shiny-testing-gha-example@single_platform_snapshot`](https://github.com/rstudio/shiny-testing-gha-example/tree/single_platform_snapshot)
-  * **Compare:** [`Minimal` to `Single platform snapshot`](https://github.com/rstudio/shiny-testing-gha-example/compare/minimal...single_platform_snapshot)
-  * **Pro:**
-    * All benefits of `Minimal` testing
-    * Test using `shinytest`
-    * Snapshots with `shinytest` on a single platform
-  * **Con:**
-    * Only perform `shinytest` snapshot testing on a single platform
+### Choose a template
 
-* **Multi platform snapshot:** `testthat` + `shinytest` w/ snapshots on all platforms
-  * **GitHub Branch:** [`rstudio/shiny-testing-gha-example@multi_platform_snapshot`](https://github.com/rstudio/shiny-testing-gha-example/tree/multi_platform_snapshot)
-  * **Compare:** [`Single platform snapshot` to `Multi platform snapshot`](https://github.com/rstudio/shiny-testing-gha-example/compare/single_platform_snapshot...multi_platform_snapshot)
-  * **Pro:**
-    * All benefits of `Single platform snapshot`
-    * Performs snapshots on 3 platforms
-  * **Con:**
-    * More files to manage
-    * Can not debug other platform images locally, only through GitHub Actions
-      * Requires downloading zip files and manually copying in expected values
-    * Takes more time to manage
-      * Slow iteration time; ~ 10 mins for *broken* builds
+The templates described above are available through different branches of this repo. So, to choose a template, choose one of the branches from the dropdown at the top of this page (the default is template 2: snapshot testing on a single platform).
 
+<div align="center">
+  <img src="https://i.imgur.com/KozrU1V.png" width="300">
+</div>
 
-For developers who host their applications, use the `Single platform snapshot` setup.  Your applications will be run on `Linux` only in production.  It is ok to only compare images using your local platform for easier debugging (ex: `macOS`) as unexpected visual differences are rarely platform dependent as `shinytest` uses `phantomjs` on all platforms.
+### Copy a template
 
-For developers who will have users run their applications locally, you may consider the `Multi platform snapshot`. However, I do not believe it is worth the effort to maintain all of the expected `shinytest` platform images. The process to maintain them is currently slow and tedious and personally not worth the manual effort.  Instead, use `Single platform snapshot`.
+#### New project
 
-## Use this repo as a template
+To copy a template to a _new_ GitHub repo, click the green `Use this template` button. This essentially copies this repo to your GitHub profile and kick off a [GHA workflow](https://github.com/rstudio/shiny-testing-gha-example/actions) ([see here](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-from-a-template) for more details).
 
-To kick-start your shiny application testing on GitHub, click the green `Use this template` button to create a fresh GitHub repository with the full shiny application template and `Single platform snapshot` GitHub Action workflow file enabled by default. (Do **not** select `Include all branches` when using this template.)
+#### Existing project
 
-See instructions on how to [`Create a repository from a template`](https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-from-a-template).
+To copy a template to an _existing_ GitHub repo, copy the `.github/workflows/run-tests.yaml` workflow file to your GitHub repo.
 
-----------------------------
+### Modify the app code and tests
 
+After copying the template, it's time to start supplying your own app code (`app.R`), any supporting R code (`R/` directory), as well as any relevant `tests/`. Note that, when setting up snapshot based testing, you can overwrite the existing `tests/shinytest/` tests via `shinytest::recordTest()`. Once your tests are written (and recorded), make sure to run the tests (via `shiny::runTests()`) locally to make sure the tests pass locally and approve any new baselines.
 
-# Steps to reproduce this branch
+As a side note, the app code and tests in this repo were provided by `shiny::shinyAppTemplate('.')`, which provides the `app.R`, `R/` and `tests/` examples. This function can also be useful if you want to add scaffolding for tests to an existing app by doing `shiny::shinyAppTemplate(".", examples = c("shinytest", "testthat"))`.
 
-This repo serves as an example of how to test your shiny application.
+### Add R package dependencies
 
-Features in this branch:
-* Continuous Integration using GitHub Actions
-* Template app from `shiny`
-* Testing
-  * Server code testing with `testthat`
+After supplying your own app code and tests, you'll need to make sure any supporting R packages are installed on the GHA machine(s). If you happen to already know what packages the app needs to run, you can add them to the `Imports` field of the `DESCRIPTION` file. If you don't already know, you can also call `renv::dependencies()` on the root of this directly, which should return all R packages that your app needs.
 
-Please follow the steps below where you see fit to test your shiny application.
+It's worth mentioning that some R packages require system libraries that aren't already available by default on the GHA machine. This shouldn't really be an issue for Linux since [system dependencies should automatically be installed](https://github.com/rstudio/shiny-testing-gha-example/blob/555dd40/.github/workflows/run-tests.yaml#L55-L62), but its currently more of a headache on Windows and MacOS. In the case of MacOS, [homebrew](https://brew.sh) is available, so if you need to install system dependencies for something like the **openssl** package, you can add the following to the `.github/workflows/run-tests.yaml` file:
 
-## Set up App
-
-Initialize a shiny application so we have something to work with...
-
-```r
-# Set up a new app with everything but shinytest
-shiny::shinyAppTemplate(".", examples = c("app", "rdir", "module", "testthat"))
+```yaml
+- name: Install system dependencies
+  if: runner.os == 'macOS'
+  run: |
+    brew install openssl
 ```
 
-If you already have a shiny application ready, set up testing for your application by calling:
+### Change the authors, licensing, etc.
+
+Finally, you'll want to edit the `LICENSE`, `LICENSE.md`, and `DESCRIPTION` files to contain suitable authors and copyright holders. Note also that the `DESCRIPTION` allows someone to `remotes::install_github()` on your repo to install all the R dependencies for your app, so you should also update the `Package`, `Title`, and `Description` fields to contain relevant info.
+
+### View and manage test results
+
+At this point, you're likely ready to start committing and pushing your code to a GitHub repo. This should trigger the `run-tests` workflow to run with your new code. To view the results, go to the "Actions" tab and click on the `run-tests` workflow, which will list every run of the workflow.
+
+![](https://i.imgur.com/d5uMbid.png)
+
+To view a particular run, click on particular commit. If any of the builds for a particular run happened to fail, you'll see some [build artifacts](https://docs.github.com/en/actions/configuring-and-managing-workflows/persisting-workflow-data-using-artifacts). These artifacts contain the contents of the `tests/` directory, which is primarily useful for resolving the snapshot-based test failures. To resolve other test failures, you'll have to refer to the build log (if you see something like `Not all shinytest scripts passed for ..` in the build log, then you have snapshot failures).
+
+![](https://i.imgur.com/sC4TwEd.png)
+
+To view the snapshot differences, download the artifacts, and replace your local `tests/` directory with the artifacts' `tests/`. You can then call `shinytest::viewTestDiff()` on the app directory to view (and potentially approve) the differences. After approving, the differences should be tracked in your git repo, making it so you can commit and push the changes to resolve the test failure(s).
+
+### Testing multiple applications
+
+All the templates provided here provide the scaffolding for testing a _single_ application. Here we'll demonstrate how to setup scaffolding for testing multiple apps. First off, let's use the GitHub Actions workflow for snapshot testing on a single platform:
 
 ```r
-shiny::shinyAppTemplate(".", examples = c("testthat"))
-```
-
-## GitHub Actions
-
-#### Use a `DESCRIPTION` file
-
-To integrate with GitHub Actions, we should use a `./DESCRIPTION` file. This will allow us to install necessary packages for running the application and for testing the application.
-
-Packages needed to run the application should be put in `Imports`.  Packages needed for testing the application should be put in `Suggests`.  Use the `renv` package to help find all package dependencies being used in your application: `unique(renv::dependencies()$Package)`.
-
-
-```r
-usethis::use_description() # Initialize description file
-usethis::use_package("shiny") # required to run app. (Imports)
-usethis::use_package("testthat", "Suggests") # testing only
-```
-
-From here, feel free to manually adjust the title, description, authors, etc. This will not affect testing your application testing.
-
-
-### Copy
-
-To download this repo's workflow file, run:
-
-```r
-usethis::use_github_action(
-  url = "https://raw.githubusercontent.com/rstudio/shiny-testing-gha-example/minimal/.github/workflows/run-tests.yaml"
+library(usethis)
+use_github_action(
+ url = "https://raw.githubusercontent.com/rstudio/shiny-testing-gha-example/single_platform_snapshot/.github/workflows/run-tests.yaml"
 )
 ```
 
-### Manual
+Next, lets use `shiny::shinyAppTemplate()` to set-up scaffolding for multiple apps, the first of which will have snapshot-based testing and the second of which only needs server testing:
 
-To produce this repo's workflow file manually, follow these steps:
-
-* Initialize from a standard `R CMD Check` workflow:
 ```r
-usethis::use_github_action_check_standard("run-tests.yaml")
-```
-* Change job name and workflow name from `R-CMD-Check` to `run-tests`
-```yaml
-name: run-tests
-
-jobs:
-  run-tests:
-```
-* Remove any `r: 'devel'` matrix configurations. These are not beneficial for application testing.
-* In `run-tests.yaml`, change `Check` step to:
-```yaml
-      - name: Run tests
-        shell: Rscript {0}
-        run: |
-          shiny::runTests(".", assert = TRUE)
-```
-* Remove installation of `rcmdcheck` in `Install dependencies`
-* In `run-tests.yaml`, change `Upload check results` step to:
-```yaml
-      - name: Upload test results
-        if: failure()
-        uses: actions/upload-artifact@master
-        with:
-          name: ${{ runner.os }}-r${{ matrix.config.r }}-tests
-          path: tests
+library(shiny)
+shinyAppTemplate("app1", examples = c("app", "shinytest"))
+shinyAppTemplate("app2", examples = c("app", "testthat"))
 ```
 
-# File Structure
+As a result, the file structure now looks something like:
 
-File structure of testing application:
-
-
-<!-- tree -a -I ".git|.DS_Store" -->
+```r
+fs::dir_tree(all = TRUE)
 ```
-├── .Rbuildignore
+
+```r
+.
 ├── .github
-│   ├── .gitignore
-│   └── workflows
-│       └── run-tests.yaml
-├── DESCRIPTION
-├── LICENSE
-├── LICENSE.md
-├── R
-│   ├── example-module.R
-│   └── example.R
-├── README.md
-├── app.R
-└── tests
-    ├── testthat
-    │   ├── test-examplemodule.R
-    │   ├── test-server.R
-    │   └── test-sort.R
-    └── testthat.R
+│   ├── .gitignore
+│   └── workflows
+│       └── run-tests.yaml
+├── app1
+│   ├── app.R
+│   └── tests
+│       ├── shinytest
+│       │   └── mytest.R
+│       └── shinytest.R
+└── app2
+    ├── app.R
+    └── tests
+        ├── testthat
+        │   └── test-server.R
+        └── testthat.R
 ```
+
+Now, to run tests over all the applications, we'll have to edit the `.github/workflows/run-tests.yaml` file to change `shiny::runTests(".", assert = TRUE)` to `lapply(c("app1", "app2"), shiny::runTests, assert = TRUE)` (or, if you'd rather not hard code the app directory names, do `lapply(dirname(Sys.glob("*/app.R")), shiny::runTests, assert = TRUE)`)
+
+At this point, you could replace the app code and tests with your own, then put all the R dependencies in a top-level `DESCRIPTION` file, and that way the GHA workflow will know how to install all the R dependencies:
+
+```r
+pkgs <- paste(renv::dependencies()$Package, collapse = ",")
+use_description(fields = list(Imports = pkgs))
+```
+
+### Using renv for reproducibility
+
+If reproducibility is of utmost importance for your project, you may want to consider relying on [**renv**](https://rstudio.github.io/renv/articles/renv.html) instead of a `DESCRIPTION` file to "lock in" versions of the R packages that you're using. Note that if you do this, you'll have to add a step to your `.github/workflows/run-tests.yaml` to include something like:
+
+```yaml
+- name: Restore renv snapshot
+  shell: Rscript {0}
+  run: |
+    if (!require('renv')) install.packages('renv')
+    renv::restore()
+```
+
+Also, make sure to re-run `renv::snapshot()` on the development machine whenever you update packages locally to make sure the packages on GHA stay in sync.
