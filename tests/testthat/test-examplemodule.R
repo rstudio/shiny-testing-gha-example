@@ -1,7 +1,7 @@
 context("exampleModuleServer")
 
 # See ?testServer for more information
-testServer(exampleModuleServer, {
+shiny::testServer(exampleModuleServer, {
   # Set initial value of a button
   session$setInputs(button = 0)
 
