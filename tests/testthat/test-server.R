@@ -1,6 +1,6 @@
 context("app")
 
-testServer(expr = {
+shiny::testServer(expr = {
   # Set the `size` slider and check the output
   session$setInputs(size = 6)
   expect_equal(output$sequence, "1 2 3 4 5 6")
